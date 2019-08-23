@@ -1,0 +1,6 @@
+imbalanced-learn
+scikit-learn
+spacy
+pandas
+sqlitedict
+numpy

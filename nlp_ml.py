@@ -42,6 +42,9 @@ from sklearn import metrics
 from sqlitedict import SqliteDict
 from imblearn.over_sampling import SMOTE
 import pandas as pd
+from keras.layers import Dense
+from keras.models import Sequential
+from keras.wrappers.scikit_learn import KerasClassifier
 import sqlitedict
 import random
 random.seed(0)
@@ -49,6 +52,7 @@ import argparse
 import numpy as np
 import sys
 import pdb
+import tensorflow as tf
 import matplotlib 
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
@@ -79,6 +83,19 @@ class cleaner(TransformerMixin):
     def get_params(self, deep=True):
         return {}
 
+# Function to create model, required for KerasClassifier
+def create_model(optimizer='rmsprop', init='glorot_uniform'):
+	# create model
+	model = Sequential()
+	model.add(Dense(12, input_dim=8, kernel_initializer=init, activation='relu'))
+	model.add(Dense(8, kernel_initializer=init, activation='relu'))
+	model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
+	# Compile model
+	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+	return model
+
+
+    
 classifier_config_dict =  { 'sklearn.tree.DecisionTreeClassifier': {
                                 'criterion': ["gini", "entropy"],
                                 'max_depth': range(1, 11),
@@ -119,7 +136,12 @@ classifier_config_dict =  { 'sklearn.tree.DecisionTreeClassifier': {
                             'sklearn.linear_model.LogisticRegression': {
                                 'penalty': ["l1", "l2"],
                                 'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
-                                'dual': [True, False]}}
+                                'dual': [True, False]},
+                            'KerasClassifier': {'build_fn':'create_model', 'verbose':[0]
+                                'optimizer':['rmsprop', 'adam'], 
+                                'epochs':[50, 100, 150], 
+                                'batch_size': [5, 10, 20]}
+                          }
 
 def generate_random_classifier():
     classifiers = list(classifier_config_dict.keys())    

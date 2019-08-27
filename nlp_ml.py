@@ -2,8 +2,28 @@
     Natural language processing and machine learning by random search of the 
     classifier and hyperparameter space.
     
-    Author: Sohrab Towfighi 2019
-    License: GPL version 3.0
+    Usage
+    -----
+    python nlp_ml.py train test iters path_to_db
+    
+    Parameters 
+    ----------
+    train: string
+        An absolute or relative path to a CSV with two columns, first column name must be 
+        'text' and second column name must be 'class'. This dataset is used to train the model.
+    
+    test: string
+        An absolute or relative path to a CSV with two columns, first column name must be 
+        'text' and second column name must be 'class'. This dataset is used to test the model.
+    
+    Author
+    ------
+    Sohrab Towfighi (C) 2019
+    
+    License
+    -------
+    GPL version 3.0
+    https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
 import warnings
 warnings.filterwarnings("ignore") # numpy 1.17 has issue with spacy

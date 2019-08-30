@@ -37,6 +37,8 @@ from sklearn.model_selection import (train_test_split, cross_val_score,
                                      cross_val_predict)
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.neural_network import MLPClassifier
+
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
 from sqlitedict import SqliteDict
@@ -82,68 +84,53 @@ class cleaner(TransformerMixin):
         return self
     def get_params(self, deep=True):
         return {}
-
-# Function to create model, required for KerasClassifier
-def create_model(optimizer='rmsprop', init='glorot_uniform'):
-	# create model
-	model = Sequential()
-	model.add(Dense(12, input_dim=8, kernel_initializer=init, activation='relu'))
-	model.add(Dense(8, kernel_initializer=init, activation='relu'))
-	model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
-	# Compile model
-	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-	return model
-
-
     
-classifier_config_dict =  { 'sklearn.tree.DecisionTreeClassifier': {
-                                'criterion': ["gini", "entropy"],
-                                'max_depth': range(1, 11),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf': range(1, 21)},
-                            'sklearn.ensemble.ExtraTreesClassifier': {
-                                'n_estimators': [100],
-                                'criterion': ["gini", "entropy"],
-                                'max_features': np.arange(0.05, 1.01, 0.05),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf': range(1, 21),
-                                'bootstrap': [True, False]},
-                            'sklearn.ensemble.RandomForestClassifier': {
-                                'n_estimators': [100],
-                                'criterion': ["gini", "entropy"],
-                                'max_features': np.arange(0.05, 1.01, 0.05),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf':  range(1, 21),
-                                'bootstrap': [True, False]},
-                            'sklearn.ensemble.GradientBoostingClassifier': {
-                                'n_estimators': [100],
-                                'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
-                                'max_depth': range(1, 11),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf': range(1, 21),
-                                'subsample': np.arange(0.05, 1.01, 0.05),
-                                'max_features': np.arange(0.05, 1.01, 0.05)},
-                            'sklearn.neighbors.KNeighborsClassifier': {
-                                'n_neighbors': range(1, 101),
-                                'weights': ["uniform", "distance"],
-                                'p': [1, 2]},
-                            'sklearn.svm.LinearSVC': {
-                                'penalty': ["l1", "l2"],
-                                'loss': ["hinge", "squared_hinge"],
-                                'dual': [True, False],
-                                'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-                                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.]},
-                            'sklearn.linear_model.LogisticRegression': {
-                                'penalty': ["l1", "l2"],
-                                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
-                                'dual': [True, False]},
-                            'KerasClassifier': {'build_fn':'create_model', 'verbose':[0]
-                                'optimizer':['rmsprop', 'adam'], 
-                                'epochs':[50, 100, 150], 
-                                'batch_size': [5, 10, 20]}
-                          }
-
 def generate_random_classifier():
+    classifier_config_dict =  { 'sklearn.tree.DecisionTreeClassifier': {
+                'criterion': ["gini", "entropy"],
+                'max_depth': range(1, 11),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf': range(1, 21)},
+            'sklearn.ensemble.ExtraTreesClassifier': {
+                'n_estimators': [100],
+                'criterion': ["gini", "entropy"],
+                'max_features': np.arange(0.05, 1.01, 0.05),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf': range(1, 21),
+                'bootstrap': [True, False]},
+            'sklearn.ensemble.RandomForestClassifier': {
+                'n_estimators': [100],
+                'criterion': ["gini", "entropy"],
+                'max_features': np.arange(0.05, 1.01, 0.05),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf':  range(1, 21),
+                'bootstrap': [True, False]},
+            'sklearn.ensemble.GradientBoostingClassifier': {
+                'n_estimators': [100],
+                'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
+                'max_depth': range(1, 11),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf': range(1, 21),
+                'subsample': np.arange(0.05, 1.01, 0.05),
+                'max_features': np.arange(0.05, 1.01, 0.05)},
+            'sklearn.neighbors.KNeighborsClassifier': {
+                'n_neighbors': range(1, 101),
+                'weights': ["uniform", "distance"],
+                'p': [1, 2]},
+            'sklearn.svm.LinearSVC': {
+                'penalty': ["l1", "l2"],
+                'loss': ["hinge", "squared_hinge"],
+                'dual': [True, False],
+                'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
+                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.]},
+            'sklearn.linear_model.LogisticRegression': {
+                'penalty': ["l1", "l2"],
+                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
+                'dual': [True, False]},
+            'MLPClassifier': {'hidden_layer_sizes':tuple([random.randint(1, 20) for x in range(0, random.randint(1,20))]),
+                'solver':['lbfgs']}
+          }
+
     classifiers = list(classifier_config_dict.keys())    
     chosen_clf = random.choices(classifiers)[0]
     arguments = list(classifier_config_dict[chosen_clf].keys())

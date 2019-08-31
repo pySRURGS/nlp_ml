@@ -2,8 +2,28 @@
     Natural language processing and machine learning by random search of the 
     classifier and hyperparameter space.
     
-    Author: Sohrab Towfighi 2019
-    License: GPL version 3.0
+    Usage
+    -----
+    python nlp_ml.py train test iters path_to_db
+    
+    Parameters 
+    ----------
+    train: string
+        An absolute or relative path to a CSV with two columns, first column name must be 
+        'text' and second column name must be 'class'. This dataset is used to train the model.
+    
+    test: string
+        An absolute or relative path to a CSV with two columns, first column name must be 
+        'text' and second column name must be 'class'. This dataset is used to test the model.
+    
+    Author
+    ------
+    Sohrab Towfighi (C) 2019
+    
+    License
+    -------
+    GPL version 3.0
+    https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
 import warnings
 warnings.filterwarnings("ignore") # numpy 1.17 has issue with spacy
@@ -17,11 +37,16 @@ from sklearn.model_selection import (train_test_split, cross_val_score,
                                      cross_val_predict)
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.neural_network import MLPClassifier
+
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
 from sqlitedict import SqliteDict
 from imblearn.over_sampling import SMOTE
 import pandas as pd
+from keras.layers import Dense
+from keras.models import Sequential
+from keras.wrappers.scikit_learn import KerasClassifier
 import sqlitedict
 import random
 random.seed(0)
@@ -29,6 +54,7 @@ import argparse
 import numpy as np
 import sys
 import pdb
+import tensorflow as tf
 import matplotlib 
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
@@ -58,50 +84,53 @@ class cleaner(TransformerMixin):
         return self
     def get_params(self, deep=True):
         return {}
-
-classifier_config_dict =  { 'sklearn.tree.DecisionTreeClassifier': {
-                                'criterion': ["gini", "entropy"],
-                                'max_depth': range(1, 11),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf': range(1, 21)},
-                            'sklearn.ensemble.ExtraTreesClassifier': {
-                                'n_estimators': [100],
-                                'criterion': ["gini", "entropy"],
-                                'max_features': np.arange(0.05, 1.01, 0.05),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf': range(1, 21),
-                                'bootstrap': [True, False]},
-                            'sklearn.ensemble.RandomForestClassifier': {
-                                'n_estimators': [100],
-                                'criterion': ["gini", "entropy"],
-                                'max_features': np.arange(0.05, 1.01, 0.05),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf':  range(1, 21),
-                                'bootstrap': [True, False]},
-                            'sklearn.ensemble.GradientBoostingClassifier': {
-                                'n_estimators': [100],
-                                'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
-                                'max_depth': range(1, 11),
-                                'min_samples_split': range(2, 21),
-                                'min_samples_leaf': range(1, 21),
-                                'subsample': np.arange(0.05, 1.01, 0.05),
-                                'max_features': np.arange(0.05, 1.01, 0.05)},
-                            'sklearn.neighbors.KNeighborsClassifier': {
-                                'n_neighbors': range(1, 101),
-                                'weights': ["uniform", "distance"],
-                                'p': [1, 2]},
-                            'sklearn.svm.LinearSVC': {
-                                'penalty': ["l1", "l2"],
-                                'loss': ["hinge", "squared_hinge"],
-                                'dual': [True, False],
-                                'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-                                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.]},
-                            'sklearn.linear_model.LogisticRegression': {
-                                'penalty': ["l1", "l2"],
-                                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
-                                'dual': [True, False]}}
-
+    
 def generate_random_classifier():
+    classifier_config_dict =  { 'sklearn.tree.DecisionTreeClassifier': {
+                'criterion': ["gini", "entropy"],
+                'max_depth': range(1, 11),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf': range(1, 21)},
+            'sklearn.ensemble.ExtraTreesClassifier': {
+                'n_estimators': [100],
+                'criterion': ["gini", "entropy"],
+                'max_features': np.arange(0.05, 1.01, 0.05),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf': range(1, 21),
+                'bootstrap': [True, False]},
+            'sklearn.ensemble.RandomForestClassifier': {
+                'n_estimators': [100],
+                'criterion': ["gini", "entropy"],
+                'max_features': np.arange(0.05, 1.01, 0.05),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf':  range(1, 21),
+                'bootstrap': [True, False]},
+            'sklearn.ensemble.GradientBoostingClassifier': {
+                'n_estimators': [100],
+                'learning_rate': [1e-3, 1e-2, 1e-1, 0.5, 1.],
+                'max_depth': range(1, 11),
+                'min_samples_split': range(2, 21),
+                'min_samples_leaf': range(1, 21),
+                'subsample': np.arange(0.05, 1.01, 0.05),
+                'max_features': np.arange(0.05, 1.01, 0.05)},
+            'sklearn.neighbors.KNeighborsClassifier': {
+                'n_neighbors': range(1, 101),
+                'weights': ["uniform", "distance"],
+                'p': [1, 2]},
+            'sklearn.svm.LinearSVC': {
+                'penalty': ["l1", "l2"],
+                'loss': ["hinge", "squared_hinge"],
+                'dual': [True, False],
+                'tol': [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
+                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.]},
+            'sklearn.linear_model.LogisticRegression': {
+                'penalty': ["l1", "l2"],
+                'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
+                'dual': [True, False]},
+            'MLPClassifier': {'hidden_layer_sizes':tuple([random.randint(1, 20) for x in range(0, random.randint(1,20))]),
+                'solver':['lbfgs']}
+          }
+
     classifiers = list(classifier_config_dict.keys())    
     chosen_clf = random.choices(classifiers)[0]
     arguments = list(classifier_config_dict[chosen_clf].keys())
@@ -172,7 +201,7 @@ class customPipeline(object):
         self.classifier.fit(X, y)
     def predict(self, X, y):
         y_pred = self.classifier.predict(X)
-        self._test_accuracy = metrics.accuracy_score(y, y_pred)
+        self._test__accuracy = metrics.accuracy_score(y, y_pred)
         self._test__precision = metrics.precision_score(y, y_pred)
         self._test__recall = metrics.recall_score(y, y_pred)
         print(self._train__accuracy, self._train__precision, self._train__recall)

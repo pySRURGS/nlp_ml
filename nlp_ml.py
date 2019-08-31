@@ -164,7 +164,7 @@ class customPipeline(object):
             else:
                 raise e
         if store == True:
-            self._train_accuracy = metrics.accuracy_score(y, y_pred)
+            self._train__accuracy = metrics.accuracy_score(y, y_pred)
             self._train__precision = metrics.precision_score(y, y_pred)
             self._train__recall = metrics.recall_score(y, y_pred)
         return y_pred
@@ -175,6 +175,7 @@ class customPipeline(object):
         self._test_accuracy = metrics.accuracy_score(y, y_pred)
         self._test__precision = metrics.precision_score(y, y_pred)
         self._test__recall = metrics.recall_score(y, y_pred)
+        print(self._train__accuracy, self._train__precision, self._train__recall)
         return y_pred
 
 def main(train, test, path_to_db):

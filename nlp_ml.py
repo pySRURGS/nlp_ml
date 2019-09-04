@@ -31,6 +31,7 @@ __doc__='''
     GPL version 3.0
     https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
+__version__ = '0.1'
 import warnings
 warnings.filterwarnings("ignore") # numpy 1.17 has issue with spacy
 import string

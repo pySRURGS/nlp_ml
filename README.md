@@ -2,7 +2,7 @@
 Natural language processing and machine learning of a CSV file with text data and labels.
 CSV file must have the columns 'text' and 'class'.
 
-# Installation
+## Installation
 
 ```
 git clone https://github.com/sohrabtowfighi/nlp_ml.git
@@ -10,7 +10,7 @@ cd nlp_ml
 pip install -r requirements.txt --user
 ```
 
-# Usage
+## Usage
 
 ```
 python nlp_ml.py -h
@@ -33,8 +33,8 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
-# Author
+## Author
 Sohrab Towfighi
 
-# License
+## License
 GPL Version 3.0

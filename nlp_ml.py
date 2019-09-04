@@ -16,6 +16,12 @@ __doc__='''
         An absolute or relative path to a CSV with two columns, first column name must be 
         'text' and second column name must be 'class'. This dataset is used to test the model.
     
+    iters: int
+        The number of different model/hyperparameter configurations to try out 
+
+    path_to_db: string
+        An absolute or relative path to where we should save the database file        
+
     Author
     ------
     Sohrab Towfighi (C) 2019

@@ -1,4 +1,4 @@
-'''
+__doc__='''
     Natural language processing and machine learning by random search of the 
     classifier and hyperparameter space.
     
@@ -29,6 +29,7 @@ import warnings
 warnings.filterwarnings("ignore") # numpy 1.17 has issue with spacy
 import string
 import spacy
+import tabulate
 from spacy.lang.en.stop_words import STOP_WORDS
 from spacy.lang.en import English
 import sklearn
@@ -163,7 +164,7 @@ def load_X_y(path_to_csv):
     X = X.tolist()
     return X, y 
 
-class customPipeline(object):
+class CustomPipeline():
     def __init__(self, vectorizer, classifier):
         self.vectorizer = vectorizer
         self.classifier = classifier
@@ -171,12 +172,12 @@ class customPipeline(object):
         SMOTE_oversampler = SMOTE()  
         self.cleaner = clean_transformer
         self.oversampler = SMOTE_oversampler
-        self._train__accuracy = None
-        self._train__precision = None 
-        self._train__recall = None
-        self._test__accuracy = None
-        self._test__precision = None 
-        self._test__recall = None
+        self._train_accuracy = None
+        self._train_precision = None 
+        self._train_recall = None
+        self._test_accuracy = None
+        self._test_precision = None 
+        self._test_recall = None
     def preprocess(self, X, y):
         X = self.cleaner.transform(X)
         X = self.vectorizer.fit_transform(X)
@@ -193,19 +194,45 @@ class customPipeline(object):
             else:
                 raise e
         if store == True:
-            self._train__accuracy = metrics.accuracy_score(y, y_pred)
-            self._train__precision = metrics.precision_score(y, y_pred)
-            self._train__recall = metrics.recall_score(y, y_pred)
+            self._train_accuracy = metrics.accuracy_score(y, y_pred)
+            self._train_precision = metrics.precision_score(y, y_pred)
+            self._train_recall = metrics.recall_score(y, y_pred)
         return y_pred
     def fit(self, X, y):
         self.classifier.fit(X, y)
-    def predict(self, X, y):
-        y_pred = self.classifier.predict(X)
-        self._test__accuracy = metrics.accuracy_score(y, y_pred)
-        self._test__precision = metrics.precision_score(y, y_pred)
-        self._test__recall = metrics.recall_score(y, y_pred)
-        print(self._train__accuracy, self._train__precision, self._train__recall)
+    def preprocess_predict(self, X, y):
+        X_transform = self.cleaner.transform(X)
+        X_transform = self.vectorizer.transform(X_transform)
+        y_pred = self.classifier.predict(X_transform)
+        self._test_accuracy = metrics.accuracy_score(y, y_pred)
+        self._test_precision = metrics.precision_score(y, y_pred)
+        self._test_recall = metrics.recall_score(y, y_pred)
+        print(self._train_accuracy, self._train_precision, self._train_recall)
         return y_pred
+    def summarize(self):
+        return [self._train_accuracy, self._train_precision, self._train_recall, 
+                  self._test_accuracy, self._test_precision, self._test_recall]
+
+class PipelineList():
+    def __init__(self, path_to_db):
+        self._results = []
+        with SqliteDict(path_to_db, autocommit=True) as results_dict: 
+            for key in results_dict.keys():
+                self._results.append(results_dict[key])
+    def sort(self):
+        self._results = sorted(self._results, key=lambda x: x._train_accuracy,
+                               reverse=True)
+    def print(self, top=5):
+        table = []
+        header = ["_train_accuracy", "_train_precision", "_train_recall", 
+                  "_test_accuracy", "_test_precision", "_test_recall"]
+        num_eqn = int(np.min((top, len(self._results))))
+        for i in range(0, num_eqn):
+            row = self._results[i].summarize()
+            table.append(row)
+        table_string = tabulate.tabulate(table, headers=header)
+        print(table_string)
+
 
 def main(train, test, path_to_db):
     examined_one_configuration = False
@@ -214,13 +241,12 @@ def main(train, test, path_to_db):
             classifier = generate_random_classifier()
             vectorizer = generate_random_vectorizer() 
             X_train, y_train  = load_X_y(train)
-            pipeline = customPipeline(vectorizer, classifier)
+            pipeline = CustomPipeline(vectorizer, classifier)
             X_train, y_train = pipeline.preprocess(X_train, y_train)
             pipeline.cv_predict(X_train, y_train)
             pipeline.fit(X_train, y_train)
             X_test, y_test  = load_X_y(test)
-            X_test, y_test = pipeline.preprocess(X_test, y_test)
-            y_pred = pipeline.predict(X_test, y_test)
+            y_pred = pipeline.preprocess_predict(X_test, y_test)
             with SqliteDict(path_to_db, autocommit=True) as results_dict: 
                 results_dict[str(vectorizer)+str(classifier)] = pipeline
             examined_one_configuration = True
@@ -243,3 +269,6 @@ if __name__ == '__main__':
     path_to_db = arguments.path_to_db
     for i in range(0,iters):
         main(train, test, path_to_db)
+    pipelines = PipelineList(path_to_db)
+    pipelines.sort()
+    pipelines.print()

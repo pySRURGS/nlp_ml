@@ -1,6 +1,9 @@
-imbalanced-learn
+tabulate
 scikit-learn
-spacy
-pandas
 sqlitedict
-numpy
+spacy
+imbalanced-learn
+keras
+tensorflow
+matplotlib
+mlxtend

@@ -19,7 +19,7 @@ python nlp_ml.py -h
 Should print 
 
 ```
-usage: pySRURGS.py [-h] train test iters path_to_db
+usage: nlp_ml.py [-h] train test iters path_to_db
 
 positional arguments:
   train       absolute or relative file path to the csv file housing the
@@ -31,6 +31,12 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+```
+
+### An example
+
+```
+python nlp_ml.py ./spam_data/SMSSpamCollection_train.csv ./spam_data/SMSSpamCollection_test.csv 10 ./spam_data.db
 ```
 
 ## Author

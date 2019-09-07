@@ -10,12 +10,14 @@ python nlp_ml.py train test iters path_to_db
 Parameters 
 ----------
 train: string
-    An absolute or relative path to a CSV with two columns, first column name must be 
-    'text' and second column name must be 'class'. This dataset is used to train the model.
+    An absolute or relative path to a CSV with two columns, first column name 
+    must be 'text' and second column name must be 'class'. This dataset is used 
+    to train the model.
 
 test: string
-    An absolute or relative path to a CSV with two columns, first column name must be 
-    'text' and second column name must be 'class'. This dataset is used to test the model.
+    An absolute or relative path to a CSV with two columns, first column name 
+    must be 'text' and second column name must be 'class'. This dataset is used 
+    to test the model.
 
 iters: int
     The number of different model/hyperparameter configurations to try out 
@@ -31,6 +33,10 @@ License
 -------
 GPL version 3.0
 https://www.gnu.org/licenses/gpl-3.0.en.html
+
+Note
+----
+Developed using Python 3.7
 """
 __version__ = '0.1'
 import matplotlib
@@ -288,16 +294,32 @@ def main(train, test, path_to_db):
             return -1
 
 
+def select_and_save_best_model(pipelines, train_accuracy_criterion=0.9,
+                               test_accuracy_criterion=0.9):
+    pipelines.sort()
+    chosen_model = None
+    for i in range(0,len(pipelines._results)):
+        pipeline = pipelines._results[i]
+        if pipeline._train_accuracy_score > train_accuracy_criterion:
+            if pipeline._test_accuracy_score > test_accuracy_criterion:
+                chosen_model = pipeline
+    if chosen_model is None:
+        print("No model meets the accuracy criteria")
+    else:
+        with SqliteDict(path_to_db, autocommit=True) as results_dict:
+            results_dict['best_model'] = chosen_model
+    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='nlp_ml.py',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         "train",
-        help="absolute or relative file path to the csv file housing the training data")
+        help="absolute or relative file path to the training data csv")
     parser.add_argument(
         "test",
-        help="absolute or relative file path to the csv file housing the testing data")
+        help="absolute or relative file path to the testing data csv")
     parser.add_argument(
         "iters",
         help="the number of classifiers to be attempted in this run",

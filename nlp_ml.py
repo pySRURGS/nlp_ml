@@ -190,6 +190,11 @@ def load_X_y(path_to_csv):
     X = X.tolist()
     return X, y
 
+def load_X(path_to_csv):
+    df = pd.read_csv(path_to_csv)
+    X = df['text']
+    X = X.tolist()
+    return X, y    
 
 class CustomPipeline():
     def __init__(self, vectorizer, classifier):
@@ -231,15 +236,18 @@ class CustomPipeline():
     def fit(self, X, y):
         self.classifier.fit(X, y)
 
-    def preprocess_predict(self, X, y):
+    def preprocess_predict(self, X):
         X_transform = self.cleaner.transform(X)
         X_transform = self.vectorizer.transform(X_transform)
         y_pred = self.classifier.predict(X_transform)
+        return y_pred
+
+    def calculate_performance(self, X, y):
+        y_pred = self.preprocess_predict(X)
         self._test_accuracy = metrics.accuracy_score(y, y_pred)
         self._test_precision = metrics.precision_score(y, y_pred)
         self._test_recall = metrics.recall_score(y, y_pred)
         print(self._train_accuracy, self._train_precision, self._train_recall)
-        return y_pred
 
     def summarize(self):
         return [
@@ -254,9 +262,14 @@ class CustomPipeline():
 class PipelineList():
     def __init__(self, path_to_db):
         self._results = []
+        self._best_pipeline = None
         with SqliteDict(path_to_db, autocommit=True) as results_dict:
             for key in results_dict.keys():
                 self._results.append(results_dict[key])
+            try:
+                self._best_pipeline = results_dict['best_model']
+            except:
+                pass
 
     def sort(self):
         self._results = sorted(self._results, key=lambda x: x._train_accuracy,
@@ -286,7 +299,7 @@ def main(train, test, path_to_db):
             pipeline.cv_predict(X_train, y_train)
             pipeline.fit(X_train, y_train)
             X_test, y_test = load_X_y(test)
-            y_pred = pipeline.preprocess_predict(X_test, y_test)
+            pipeline.calculate_performance(X_test, y_test)
             with SqliteDict(path_to_db, autocommit=True) as results_dict:
                 results_dict[str(vectorizer) + str(classifier)] = pipeline
             examined_one_configuration = True
@@ -308,7 +321,8 @@ def select_and_save_best_model(pipelines, train_accuracy_criterion=0.9,
     else:
         with SqliteDict(path_to_db, autocommit=True) as results_dict:
             results_dict['best_model'] = chosen_model
-    
+        pipelines._best_pipeline = chosen_model
+    return chosen_model
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -316,10 +330,10 @@ if __name__ == '__main__':
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         "train",
-        help="absolute or relative file path to the training data csv")
+        help="absolute or relative file path to the training data CSV")
     parser.add_argument(
         "test",
-        help="absolute or relative file path to the testing data csv")
+        help="absolute or relative file path to the testing data CSV")
     parser.add_argument(
         "iters",
         help="the number of classifiers to be attempted in this run",
@@ -327,6 +341,9 @@ if __name__ == '__main__':
     parser.add_argument(
         "path_to_db",
         help="absolute or relative file path to the output sqlite database")
+    parser.add_argument(
+        "-predict",
+        help="absolute or relative file path to a CSV; will predict labels for CSV based on best model from database; `test` and `train` get ignored")
     if len(sys.argv) < 2:
         parser.print_usage()
         sys.exit(1)
@@ -335,6 +352,14 @@ if __name__ == '__main__':
     test = arguments.test
     iters = arguments.iters
     path_to_db = arguments.path_to_db
+    predict = arguments.predict
+    if predict is not None:
+        X = load_X(predict)
+        pipelines = PipelineList(path_to_db)
+        best_pipe = select_and_save_best_model(pipelines)
+        y_pred = best_pipe.preprocess_predict(X)
+        print(y_pred)
+        exit(0)
     for i in range(0, iters):
         main(train, test, path_to_db)
     pipelines = PipelineList(path_to_db)

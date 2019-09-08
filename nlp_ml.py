@@ -300,8 +300,8 @@ def select_and_save_best_model(pipelines, train_accuracy_criterion=0.9,
     chosen_model = None
     for i in range(0,len(pipelines._results)):
         pipeline = pipelines._results[i]
-        if pipeline._train_accuracy_score > train_accuracy_criterion:
-            if pipeline._test_accuracy_score > test_accuracy_criterion:
+        if pipeline._train_accuracy > train_accuracy_criterion:
+            if pipeline._test_accuracy > test_accuracy_criterion:
                 chosen_model = pipeline
     if chosen_model is None:
         print("No model meets the accuracy criteria")
@@ -340,3 +340,4 @@ if __name__ == '__main__':
     pipelines = PipelineList(path_to_db)
     pipelines.sort()
     pipelines.print()
+    select_and_save_best_model(pipelines)

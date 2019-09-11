@@ -3,8 +3,6 @@ import sys
 import glob
 import pdb
 import nlp_ml
-import mpmath
-import tqdm
 import numpy as np
 from sqlitedict import SqliteDict
 try:

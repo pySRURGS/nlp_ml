@@ -7,7 +7,7 @@ CSV file must have the columns 'text' and 'class'.
 ## Installation
 
 ```
-git clone https://github.com/sohrabtowfighi/nlp_ml.git
+git clone https://github.com/pySRURGS/nlp_ml.git
 cd nlp_ml
 pip install -r requirements.txt --user
 ```

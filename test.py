@@ -20,4 +20,5 @@ train = './spam_data/SMSSpamCollection_train.csv'
 test = './spam_data/SMSSpamCollection_test.csv'
 iters = 10
 path_to_db = './output.db'
-sh.python('nlp_ml.py', train, test, iters, path_to_db)
+for line in sh.python('nlp_ml.py', train, test, iters, path_to_db, _iter=True):
+    print(line)

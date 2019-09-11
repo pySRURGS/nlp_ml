@@ -109,20 +109,7 @@ class cleaner(TransformerMixin):
 
 
 def generate_random_classifier():
-    classifier_config_dict = {'sklearn.tree.DecisionTreeClassifier': {
-        'criterion': ["gini", "entropy"],
-        'max_depth': range(1, 11),
-        'min_samples_split': range(2, 21),
-        'min_samples_leaf': range(1, 21),
-        'verbose': [3]},
-        'sklearn.ensemble.ExtraTreesClassifier': {
-        'n_estimators': [100],
-        'criterion': ["gini", "entropy"],
-        'max_features': np.arange(0.05, 1.01, 0.05),
-        'min_samples_split': range(2, 21),
-        'min_samples_leaf': range(1, 21),
-        'bootstrap': [True, False],
-        'verbose': [3]},
+    classifier_config_dict = {
         'sklearn.ensemble.RandomForestClassifier': {
         'n_estimators': [100],
         'criterion': ["gini", "entropy"],
@@ -140,11 +127,6 @@ def generate_random_classifier():
         'subsample': np.arange(0.05, 1.01, 0.05),
         'max_features': np.arange(0.05, 1.01, 0.05),
         'verbose': [3]},
-        'sklearn.neighbors.KNeighborsClassifier': {
-        'n_neighbors': range(1, 101),
-        'weights': ["uniform", "distance"],
-        'p': [1, 2],
-        'verbose': [3]},
         'sklearn.svm.LinearSVC': {
         'penalty': ["l1", "l2"],
         'loss': ["hinge", "squared_hinge"],
@@ -157,8 +139,11 @@ def generate_random_classifier():
         'C': [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1., 5., 10., 15., 20., 25.],
         'dual': [True, False],
         'verbose': [3]},
-        'MLPClassifier': {'hidden_layer_sizes': tuple([random.randint(1, 20) for x in range(0, random.randint(1, 20))]),
-                          'solver': ['lbfgs'], 'verbose': [3]}
+        'MLPClassifier': {
+        'hidden_layer_sizes': tuple([random.randint(1, 20) for x
+                                     in range(0, random.randint(1, 20))]),
+        'solver': ['lbfgs'], 
+        'verbose': [True]}
     }
 
     classifiers = list(classifier_config_dict.keys())

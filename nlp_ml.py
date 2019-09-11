@@ -75,7 +75,6 @@ import warnings
 warnings.filterwarnings("ignore")  # numpy 1.17 has issue with spacy
 
 random.seed(0)
-matplotlib.use("TkAgg")
 
 
 class InvalidConfigError(Exception):

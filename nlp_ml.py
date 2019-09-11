@@ -113,7 +113,7 @@ def generate_random_classifier():
         'criterion': ["gini", "entropy"],
         'max_depth': range(1, 11),
         'min_samples_split': range(2, 21),
-        'min_samples_leaf': range(1, 21)
+        'min_samples_leaf': range(1, 21),
         'verbose': [3]},
         'sklearn.ensemble.ExtraTreesClassifier': {
         'n_estimators': [100],

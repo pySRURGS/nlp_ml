@@ -238,7 +238,6 @@ class CustomPipeline():
         self._test_accuracy = metrics.accuracy_score(y, y_pred)
         self._test_precision = metrics.precision_score(y, y_pred)
         self._test_recall = metrics.recall_score(y, y_pred)
-        print(self._train_accuracy, self._train_precision, self._train_recall)
 
     def summarize(self):
         return [

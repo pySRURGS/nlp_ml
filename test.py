@@ -16,8 +16,8 @@ except ImportError:
             return pbs.Command(attr)
     sh = Sh()
 
-train = './spam_data/SMSSpamCollection_train.csv'
-test = './spam_data/SMSSpamCollection_test.csv'
+train = './spam_data/SMSSpamCollectionMini_train.csv'
+test = './spam_data/SMSSpamCollectionMini_test.csv'
 iters = 10
 path_to_db = './output.db'
 for line in sh.python('nlp_ml.py', train, test, iters, path_to_db, _iter=True):

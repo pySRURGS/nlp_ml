@@ -1,4 +1,6 @@
 # nlp_ml
+[![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)
+
 Natural language processing and machine learning of a CSV file with text data and labels.
 CSV file must have the columns 'text' and 'class'.
 

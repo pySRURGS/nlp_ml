@@ -56,5 +56,6 @@ Using TensorFlow backend.
 ## Author
 Sohrab Towfighi
 
+
 ## License
-GPL Version 3.0
+This project is licensed under the GPL 3.0 License - see the [LICENSE](LICENSE) file for details

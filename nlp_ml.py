@@ -337,15 +337,22 @@ def make_plots(train, test, pipelines):
     cm = confusion_matrix(y_target=y_test, 
                           y_predicted=y_pred, 
                           binary=True)
-    fig, ax = plot_confusion_matrix(conf_mat=cm,
-                                    colorbar=True)
-    fig.set_size_inches(3,2)
+    plot_confusion_matrix(conf_mat=cm, colorbar=True)
+    fig = plt.gcf()
+    fig.set_size_inches(4,3)
     plt.tight_layout()
-    plt.show()
-    fig, ax = plot_learning_curves(X_train, y_train, X_test, y_test, clf)
-    fig.set_size_inches(3,2)
+    extensions = ['svg', 'eps', 'png']
+    for ext in extensions:
+        plt.savefig("./figures/confusion_matrix."+ext)
+    plt.clf()
+    plot_learning_curves(X_train, y_train, X_test, y_test, 
+                         clf, style='seaborn-colorblind', print_model=False)
+    fig = plt.gcf()
+    fig.set_size_inches(4,3)
+    plt.ylabel("Misclassification fraction")
     plt.tight_layout()
-    plt.show()    
+    for ext in extensions:
+        plt.savefig("./figures/learning_curve."+ext)
 
 
 if __name__ == '__main__':

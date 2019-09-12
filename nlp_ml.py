@@ -198,9 +198,11 @@ class CustomPipeline():
         self._train_accuracy = None
         self._train_precision = None
         self._train_recall = None
+        self._train_roc_auc = None
         self._test_accuracy = None
         self._test_precision = None
         self._test_recall = None
+        self._test_roc_auc = None
 
     def fit_preprocess(self, X, y, oversample=True):
         X = self.cleaner.transform(X)
@@ -225,6 +227,7 @@ class CustomPipeline():
                 raise e
         if store:
             self._train_accuracy = metrics.accuracy_score(y, y_pred)
+            self._train_roc_auc = metrics.roc_auc_score(y, y_pred)
             self._train_precision = metrics.precision_score(y, y_pred)
             self._train_recall = metrics.recall_score(y, y_pred)
         return y_pred
@@ -253,15 +256,18 @@ class CustomPipeline():
         self._test_accuracy = metrics.accuracy_score(y, y_pred)
         self._test_precision = metrics.precision_score(y, y_pred)
         self._test_recall = metrics.recall_score(y, y_pred)
+        self._test_roc_auc = metrics.roc_auc_score(y, y_pred)
 
     def summarize(self):
         return [
             self._train_accuracy,
             self._train_precision,
             self._train_recall,
+            self._train_roc_auc,
             self._test_accuracy,
             self._test_precision,
-            self._test_recall]
+            self._test_recall,
+            self._test_roc_auc]
 
 
 class PipelineList():
@@ -282,13 +288,14 @@ class PipelineList():
 
     def print(self, top=5):
         table = []
-        header = ["_train_accuracy", "_train_precision", "_train_recall",
-                  "_test_accuracy", "_test_precision", "_test_recall"]
+        header = ["_train_accuracy", "_train_precision", "_train_recall", 
+                  "_train_roc_auc", "_test_accuracy", "_test_precision", 
+                  "_test_recall", "_test_roc_auc"]
         num_eqn = int(np.min((top, len(self._results))))
         for i in range(0, num_eqn):
             row = self._results[i].summarize()
             table.append(row)
-        table_string = tabulate.tabulate(table, headers=header)
+        table_string = tabulate.tabulate(table, headers=header, floatfmt=".2f")
         print(table_string)
 
 

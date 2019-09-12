@@ -72,10 +72,10 @@ import tabulate
 import spacy
 import string
 import warnings
+from yellowbrick.classifier import ClassificationReport
 warnings.filterwarnings("ignore")  # numpy 1.17 has issue with spacy
 
 random.seed(0)
-
 
 class InvalidConfigError(Exception):
     pass
@@ -178,7 +178,7 @@ def load_X_y(path_to_csv):
     df = pd.read_csv(path_to_csv)
     X = df['text']
     y = df['class']
-    X = X.tolist()
+    X = np.array(X)
     return X, y
 
 def load_X(path_to_csv):
@@ -190,6 +190,7 @@ def load_X(path_to_csv):
 class CustomPipeline():
     def __init__(self, vectorizer, classifier):
         self.vectorizer = vectorizer
+        self._estimator_type = 'classifier'
         self.classifier = classifier
         clean_transformer = cleaner()
         SMOTE_oversampler = SMOTE()
@@ -202,13 +203,18 @@ class CustomPipeline():
         self._test_precision = None
         self._test_recall = None
 
-    def preprocess(self, X, y):
+    def fit_preprocess(self, X, y, oversample=True):
         X = self.cleaner.transform(X)
         X = self.vectorizer.fit_transform(X)
-        X, y = self.oversampler.fit_resample(X, y)
+        if oversample:
+            try:
+                X, y = self.oversampler.fit_resample(X, y)
+            except ValueError:
+                pass
         return X, y
 
     def cv_predict(self, X, y, store=True):
+        X, y = self.fit_preprocess(X, y)
         try:
             y_pred = cross_val_predict(self.classifier,
                                        X, y, cv=10)
@@ -225,11 +231,21 @@ class CustomPipeline():
         return y_pred
 
     def fit(self, X, y):
-        self.classifier.fit(X, y)
+        X_transform, y = self.fit_preprocess(X, y)
+        self.classifier.fit(X_transform, y)
 
-    def preprocess_predict(self, X):
+    def predict(self, X):
+        X_transform = self.preprocess(X)
+        y_pred = self.classifier.predict(X_transform)
+        return y_pred
+
+    def preprocess(self, X):
         X_transform = self.cleaner.transform(X)
         X_transform = self.vectorizer.transform(X_transform)
+        return X_transform
+
+    def preprocess_predict(self, X):
+        X_transform = self.preprocess(X)
         y_pred = self.classifier.predict(X_transform)
         return y_pred
 
@@ -285,7 +301,6 @@ def main(train, test, path_to_db):
             vectorizer = generate_random_vectorizer()
             X_train, y_train = load_X_y(train)
             pipeline = CustomPipeline(vectorizer, classifier)
-            X_train, y_train = pipeline.preprocess(X_train, y_train)
             pipeline.cv_predict(X_train, y_train)
             pipeline.fit(X_train, y_train)
             X_test, y_test = load_X_y(test)
@@ -311,8 +326,28 @@ def select_and_save_best_model(pipelines, train_accuracy_criterion=0.9,
     else:
         with SqliteDict(path_to_db, autocommit=True) as results_dict:
             results_dict['best_model'] = chosen_model
-        pipelines._best_pipeline = chosen_model
+        pipelines._best_pipeline = chosen_model        
     return chosen_model
+
+def make_plots(train, test, pipelines):
+    X_train, y_train = load_X_y(train)
+    X_test, y_test = load_X_y(test)
+    pipelines.sort()
+    clf = pipelines._results[0]
+    y_pred = clf.predict(X_test)
+    cm = confusion_matrix(y_target=y_test, 
+                          y_predicted=y_pred, 
+                          binary=True)
+    fig, ax = plot_confusion_matrix(conf_mat=cm,
+                                    colorbar=True)
+    fig.set_size_inches(3,2)
+    plt.tight_layout()
+    plt.show()
+    fig, ax = plot_learning_curves(X_train, y_train, X_test, y_test, clf)
+    fig.set_size_inches(3,2)
+    plt.tight_layout()
+    plt.show()    
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -354,5 +389,6 @@ if __name__ == '__main__':
         main(train, test, path_to_db)
     pipelines = PipelineList(path_to_db)
     pipelines.sort()
-    pipelines.print()
+    pipelines.print()    
     select_and_save_best_model(pipelines)
+    make_plots(train, test, pipelines)

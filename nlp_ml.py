@@ -72,7 +72,6 @@ import tabulate
 import spacy
 import string
 import warnings
-from yellowbrick.classifier import ClassificationReport
 warnings.filterwarnings("ignore")  # numpy 1.17 has issue with spacy
 
 random.seed(0)

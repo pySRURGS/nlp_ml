@@ -55,6 +55,8 @@ Using TensorFlow backend.
 
 ```
 
+Figures, including a confusion plot and a learning curve for the best model, are output into the `figures` directory.
+
 ## Author
 Sohrab Towfighi
 

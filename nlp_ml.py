@@ -65,6 +65,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import TransformerMixin
+from sklearn.utils.testing import all_estimators
 import sklearn
 from spacy.lang.en import English
 from spacy.lang.en.stop_words import STOP_WORDS
@@ -165,6 +166,15 @@ def generate_random_classifier():
     eval_str = eval_str + ')'
     clf = eval(eval_str)
     return clf
+
+
+def find_classifiers_with_predict_proba():
+    estimators = all_estimators()
+    estimators_with_predict_proba = []
+    for name, class_ in estimators:
+        if hasattr(class_, 'predict_proba'):
+            estimators_with_predict_proba.append(name)
+    return estimators_with_predict_proba
 
 
 def generate_random_vectorizer():
@@ -305,6 +315,12 @@ def main(train, test, path_to_db):
         try:
             classifier = generate_random_classifier()
             vectorizer = generate_random_vectorizer()
+            with SqliteDict(path_to_db, autocommit=True) as results_dict:
+                try:
+                    results_dict[str(vectorizer) + str(classifier)]
+                    continue
+                except KeyError:
+                    pass
             X_train, y_train = load_X_y(train)
             pipeline = CustomPipeline(vectorizer, classifier)
             pipeline.cv_predict(X_train, y_train)

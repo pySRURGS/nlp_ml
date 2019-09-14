@@ -67,6 +67,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.base import TransformerMixin
 from sklearn.utils.testing import all_estimators
 import sklearn
+import scikitplot as skplt
 from spacy.lang.en import English
 from spacy.lang.en.stop_words import STOP_WORDS
 import tabulate
@@ -246,6 +247,11 @@ class CustomPipeline():
         X_transform, y = self.fit_preprocess(X, y)
         self.classifier.fit(X_transform, y)
 
+    def predict_proba(self, X):
+        X_transform = self.preprocess(X)
+        y_pred = self.classifier.predict_proba(X_transform)
+        return y_pred
+
     def predict(self, X):
         X_transform = self.preprocess(X)
         y_pred = self.classifier.predict(X_transform)
@@ -357,6 +363,10 @@ def make_plots(train, test, pipelines):
     pipelines.sort()
     clf = pipelines._results[0]
     y_pred = clf.predict(X_test)
+    classifiers_with_predict_proba = find_classifiers_with_predict_proba()
+    if clf.__class__.__name__ in classifiers_with_predict_proba:
+        y_pred_proba = clf.predict_proba(X)
+        skplt.metrics.plot_roc_curve(y_true, y_probas)
     cm = confusion_matrix(y_target=y_test, 
                           y_predicted=y_pred, 
                           binary=True)
@@ -376,7 +386,6 @@ def make_plots(train, test, pipelines):
     plt.tight_layout()
     for ext in extensions:
         plt.savefig("./figures/learning_curve."+ext)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

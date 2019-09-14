@@ -10,3 +10,4 @@ mlxtend==0.17.0
 python-coveralls==2.9.3
 pytest==5.1.1
 pytest-cov==2.7.1
+scikit-plot==0.3.7

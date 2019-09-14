@@ -368,6 +368,8 @@ def make_plots(train, test, pipelines):
     if clf.classifier.__class__.__name__ in classifiers_with_predict_proba:
         y_probas = clf.predict_proba(X_test)
         skplt.metrics.plot_roc_curve(y_test, y_probas)
+        fig = plt.gcf()
+        fig.set_size_inches(4,3)
         for ext in extensions:
             plt.savefig("./figures/roc_curve."+ext)
     else:

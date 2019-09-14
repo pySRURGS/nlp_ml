@@ -3,6 +3,7 @@ import sys
 import glob
 import pdb
 import nlp_ml
+from nlp_ml import CustomPipeline, spacy_tokenizer, cleaner
 import numpy as np
 from sqlitedict import SqliteDict
 try:
@@ -18,7 +19,7 @@ except ImportError:
 
 train = './spam_data/SMSSpamCollectionMini_train.csv'
 test = './spam_data/SMSSpamCollectionMini_test.csv'
-iters = 10
+iters = 2
 path_to_db = './output.db'
-for line in sh.python('nlp_ml.py', train, test, iters, path_to_db, _iter=True):
-    print(line)
+predict = None
+nlp_ml.main(train, test, iters, path_to_db, predict)

@@ -43,8 +43,8 @@ import matplotlib
 from sklearn.model_selection import (train_test_split, cross_val_score,
                                      cross_val_predict)
 from mlxtend.plotting import plot_learning_curves
-from mlxtend.plotting import plot_confusion_matrix
 from mlxtend.evaluate import confusion_matrix
+from plotting import plot_confusion_matrix
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import pdb
@@ -315,7 +315,7 @@ class PipelineList():
         print(table_string)
 
 
-def main(train, test, path_to_db):
+def run(train, test, path_to_db):
     examined_one_configuration = False
     while examined_one_configuration == False:
         try:
@@ -391,6 +391,23 @@ def make_plots(train, test, pipelines):
     for ext in extensions:
         plt.savefig("./figures/learning_curve."+ext)
 
+def main(train, test, iters, path_to_db, predict):
+    if predict is not None:
+        X = load_X(predict)
+        pipelines = PipelineList(path_to_db)
+        best_pipe = select_and_save_best_model(pipelines)
+        y_pred = best_pipe.preprocess_predict(X)
+        print(y_pred)
+        exit(0)
+    for i in range(0, iters):
+        run(train, test, path_to_db)
+    pipelines = PipelineList(path_to_db)
+    pipelines.sort()
+    pipelines.print()    
+    select_and_save_best_model(pipelines)
+    make_plots(train, test, pipelines)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='nlp_ml.py',
@@ -420,17 +437,4 @@ if __name__ == '__main__':
     iters = arguments.iters
     path_to_db = arguments.path_to_db
     predict = arguments.predict
-    if predict is not None:
-        X = load_X(predict)
-        pipelines = PipelineList(path_to_db)
-        best_pipe = select_and_save_best_model(pipelines)
-        y_pred = best_pipe.preprocess_predict(X)
-        print(y_pred)
-        exit(0)
-    for i in range(0, iters):
-        main(train, test, path_to_db)
-    pipelines = PipelineList(path_to_db)
-    pipelines.sort()
-    pipelines.print()    
-    select_and_save_best_model(pipelines)
-    make_plots(train, test, pipelines)
+    main(train, test, iters, path_to_db, predict)

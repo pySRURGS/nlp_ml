@@ -358,15 +358,20 @@ def select_and_save_best_model(pipelines, train_accuracy_criterion=0.9,
     return chosen_model
 
 def make_plots(train, test, pipelines):
+    extensions = ['svg', 'eps', 'png']
     X_train, y_train = load_X_y(train)
     X_test, y_test = load_X_y(test)
     pipelines.sort()
     clf = pipelines._results[0]
     y_pred = clf.predict(X_test)
     classifiers_with_predict_proba = find_classifiers_with_predict_proba()
-    if clf.__class__.__name__ in classifiers_with_predict_proba:
-        y_pred_proba = clf.predict_proba(X)
-        skplt.metrics.plot_roc_curve(y_true, y_probas)
+    if clf.classifier.__class__.__name__ in classifiers_with_predict_proba:
+        y_probas = clf.predict_proba(X_test)
+        skplt.metrics.plot_roc_curve(y_test, y_probas)
+        for ext in extensions:
+            plt.savefig("./figures/roc_curve."+ext)
+    else:
+        print(clf.classifier.__class__.__name__,"not in predict proba list")
     cm = confusion_matrix(y_target=y_test, 
                           y_predicted=y_pred, 
                           binary=True)
@@ -374,7 +379,6 @@ def make_plots(train, test, pipelines):
     fig = plt.gcf()
     fig.set_size_inches(4,3)
     plt.tight_layout()
-    extensions = ['svg', 'eps', 'png']
     for ext in extensions:
         plt.savefig("./figures/confusion_matrix."+ext)
     plt.clf()

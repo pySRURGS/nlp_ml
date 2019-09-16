@@ -1,5 +1,6 @@
 # nlp_ml
 [![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
 Natural language processing and machine learning of a TSV (tab separated value) file with text data and labels.
 TSV file must have the columns 'text' and 'class'.

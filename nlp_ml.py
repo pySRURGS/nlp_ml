@@ -52,9 +52,6 @@ import numpy as np
 import argparse
 import random
 import sqlitedict
-from keras.wrappers.scikit_learn import KerasClassifier
-from keras.models import Sequential
-from keras.layers import Dense
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from sqlitedict import SqliteDict
@@ -184,14 +181,14 @@ def generate_random_vectorizer():
 
 
 def load_X_y(path_to_csv):
-    df = pd.read_csv(path_to_csv, sep='\t')
+    df = pd.read_csv(path_to_csv)
     X = df['text']
     y = df['class']
     X = np.array(X)
     return X, y
 
 def load_X(path_to_csv):
-    df = pd.read_csv(path_to_csv, sep='\t')
+    df = pd.read_csv(path_to_csv)
     X = df['text']
     X = X.tolist()
     return X, y    

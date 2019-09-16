@@ -1,8 +1,8 @@
 # nlp_ml
 [![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)
 
-Natural language processing and machine learning of a TSV (tab separated value) file with text data and labels.
-TSV file must have the columns 'text' and 'class'.
+Natural language processing and machine learning of a CSV (comma separated value) file with text data and labels.
+CSV file must have the columns 'text' and 'class'.
 
 ## Installation
 
@@ -24,9 +24,9 @@ Should print
 usage: nlp_ml.py [-h] train test iters path_to_db
 
 positional arguments:
-  train       absolute or relative file path to the tsv file housing the
+  train       absolute or relative file path to the CSV file housing the
               training data
-  test        absolute or relative file path to the tsv file housing the
+  test        absolute or relative file path to the CSV file housing the
               testing data
   iters       the number of classifiers to be attempted in this run
   path_to_db  absolute or relative file path to the output sqlite database

@@ -2,6 +2,8 @@
 # This script can be used when annotating the text data
 # We start with a CSV without annotated labels, 'source'
 # We add labels to this CSV but save it in a new file, 'target'
+#
+# Not yet tested.
 # 
 import csv
 import os 

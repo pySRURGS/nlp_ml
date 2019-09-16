@@ -46,7 +46,6 @@ from mlxtend.plotting import plot_learning_curves
 from mlxtend.evaluate import confusion_matrix
 from plotting import plot_confusion_matrix
 import matplotlib.pyplot as plt
-import tensorflow as tf
 import pdb
 import sys
 import numpy as np

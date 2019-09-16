@@ -185,14 +185,14 @@ def generate_random_vectorizer():
 
 
 def load_X_y(path_to_csv):
-    df = pd.read_csv(path_to_csv)
+    df = pd.read_csv(path_to_csv, sep='\t')
     X = df['text']
     y = df['class']
     X = np.array(X)
     return X, y
 
 def load_X(path_to_csv):
-    df = pd.read_csv(path_to_csv)
+    df = pd.read_csv(path_to_csv, sep='\t')
     X = df['text']
     X = X.tolist()
     return X, y    

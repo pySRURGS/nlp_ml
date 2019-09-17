@@ -17,8 +17,8 @@ except ImportError:
             return pbs.Command(attr)
     sh = Sh()
 
-train = './spam_data/SMSSpamCollectionMini_train.txt'
-test = './spam_data/SMSSpamCollectionMini_test.txt'
+train = './spam_data/SMSSpamCollectionMini_train.csv'
+test = './spam_data/SMSSpamCollectionMini_test.csv'
 iters = 2
 path_to_db = './output.db'
 predict = None

@@ -3,7 +3,7 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
 Natural language processing and machine learning of a CSV (comma separated value) file with text data and labels.
-CSV file must have the columns 'text' and 'class'.
+CSV file must have the columns 'text' and 'class'. The code performs 10-fold cross validation for assessing model selection on the training dataset. The code uses the SMOTE oversampler to avoid issues with imbalanced datasets.
 
 ## Installation
 

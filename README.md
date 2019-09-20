@@ -57,9 +57,9 @@ Using TensorFlow backend.
 
 Figures, including a confusion plot and a learning curve for the best model, are output into the `figures` directory.
 
-![confusion matrix](figures/confusion_matrix.png)
-![learning plot](figures/learning_curve.png)
-![roc auc](figures/roc_curve.png)
+![confusion matrix](figures/confusion_matrix.png) <br> Fig. 1: Sample Confusion Matrix <br><br><br>
+![learning plot](figures/learning_curve.png) <br> Fig. 2: Sample Learning Curve <br><br><br>
+![roc auc](figures/roc_curve.png) <br> Fig. 3: Sample Receiver Operating Curve Area Under Curve
 
 
 ## Author

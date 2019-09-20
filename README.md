@@ -55,7 +55,9 @@ Using TensorFlow backend.
 
 ```
 
-Figures, including a confusion plot and a learning curve for the best model, are output into the `figures` directory.
+### Figures
+
+Figures are output into the `figures` directory.
 
 ![confusion matrix](figures/confusion_matrix.png) <br> Fig. 1: Sample Confusion Matrix <br><br><br>
 ![learning plot](figures/learning_curve.png) <br> Fig. 2: Sample Learning Curve <br><br><br>

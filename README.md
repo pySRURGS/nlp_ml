@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
-Natural language processing and machine learning of a CSV (comma separated value) file with text data and labels.
-CSV file must have the columns 'text' and 'class'. The code performs 10-fold cross validation for assessing model selection on the training dataset. The code uses the SMOTE oversampler to avoid issues with imbalanced datasets.
+`nlp_ml` is a command line script that performs natural language processing and machine learning of a CSV (comma separated value) file with text data and labels. The CSV file must have the columns 'text' and 'class'. The code performs 10-fold cross validation for assessing model selection on the training dataset. The code uses the SMOTE oversampler to avoid issues with imbalanced datasets.
 
 ## Installation
 

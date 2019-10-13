@@ -372,6 +372,7 @@ def make_plots(train, test, pipelines):
         plt.ylabel('True positive rate')
         plt.legend(loc='best')        
         fig.set_size_inches(4,3)
+        plt.tight_layout()
         for ext in extensions:
             plt.savefig("./figures/roc_curve."+ext)
     else:

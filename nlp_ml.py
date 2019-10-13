@@ -307,8 +307,9 @@ class PipelineList():
         for i in range(0, num_eqn):
             row = self._results[i].summarize()
             table.append(row)
-        table_string = tabulate.tabulate(table, headers=header, floatfmt=".2f")
+        table_string = tabulate.tabulate(table, headers=header, floatfmt=".2f")        
         print(table_string)
+        return table_string
 
 
 def run(train, test, path_to_db):
@@ -380,6 +381,7 @@ def make_plots(train, test, pipelines):
     for ext in extensions:
         plt.savefig("./figures/confusion_matrix."+ext)
     plt.clf()
+    '''
     plot_learning_curves(X_train, y_train, X_test, y_test, 
                          clf, style='seaborn-colorblind', print_model=False)
     fig = plt.gcf()
@@ -388,6 +390,7 @@ def make_plots(train, test, pipelines):
     plt.tight_layout()
     for ext in extensions:
         plt.savefig("./figures/learning_curve."+ext)
+    '''
 
 def main(train, test, iters, path_to_db, predict):
     if predict is not None:
@@ -401,7 +404,9 @@ def main(train, test, iters, path_to_db, predict):
         run(train, test, path_to_db)
     pipelines = PipelineList(path_to_db)
     pipelines.sort()
-    pipelines.print()    
+    table = pipelines.print()
+    with open("./figures/table.csv", "w") as text_file:
+        text_file.write(table)
     select_and_save_best_model(pipelines)
     make_plots(train, test, pipelines)
 

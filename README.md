@@ -14,6 +14,8 @@ pip install -r requirements.txt --user
 
 ## Usage
 
+Run the script from within the `nlp_ml` directory.
+
 ```
 python nlp_ml.py -h
 ```

@@ -363,14 +363,13 @@ def make_plots(train, test, pipelines):
     y_pred = clf.predict(X_test)
     classifiers_with_predict_proba = find_classifiers_with_predict_proba()
     if clf.classifier.__class__.__name__ in classifiers_with_predict_proba:
-        y_probas = clf.predict_proba(X_test)
+        y_probas = clf.predict_proba(X_test)[:,0]
         fpr, tpr, _ = metrics.roc_curve(y_test, y_probas)
         fig = plt.figure(1)
         plt.plot([0, 1], [0, 1], 'k--')
         plt.plot(fpr, tpr)
         plt.xlabel('False positive rate')
-        plt.ylabel('True positive rate')
-        plt.legend(loc='best')        
+        plt.ylabel('True positive rate')   
         fig.set_size_inches(4,3)
         plt.tight_layout()
         for ext in extensions:

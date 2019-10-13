@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
-Natural language processing and machine learning of a CSV (comma separated value) file with text data and labels.
-CSV file must have the columns 'text' and 'class'.
+`nlp_ml` is a command line script that performs natural language processing and machine learning of a CSV (comma separated value) file with text data and labels. The CSV file must have the columns 'text' and 'class'. The code randomly generates classification pipelines, performs 10-fold cross validation for assessing model performance on the training dataset, and saves the results to a SQLite database. The code uses the SMOTE oversampler to avoid issues with imbalanced datasets. `nlp_ml` solves supervised binary classification problems using text data.
 
 ## Installation
 
@@ -56,7 +55,14 @@ Using TensorFlow backend.
 
 ```
 
-Figures, including a confusion plot and a learning curve for the best model, are output into the `figures` directory.
+### Figures
+
+Figures are output into the `figures` directory.
+
+![confusion matrix](figures/confusion_matrix.png) <br> Fig. 1: Sample Confusion Matrix <br><br><br>
+![learning plot](figures/learning_curve.png) <br> Fig. 2: Sample Learning Curve <br><br><br>
+![roc auc](figures/roc_curve.png) <br> Fig. 3: Sample Receiver Operating Curve Area Under Curve
+
 
 ## Author
 Sohrab Towfighi

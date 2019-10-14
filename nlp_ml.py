@@ -91,6 +91,7 @@ def spacy_tokenizer(sentence):
 
 
 def clean_text(text):
+    text = str(text)
     return text.strip().lower()
 
 
@@ -337,7 +338,8 @@ def run(train, test, path_to_db):
             return -1
 
 
-def select_and_save_best_model(pipelines, train_accuracy_criterion=0.9,
+def select_and_save_best_model(pipelines, path_to_db, 
+                               train_accuracy_criterion=0.9,
                                test_accuracy_criterion=0.9):
     pipelines.sort()
     chosen_model = None
@@ -386,20 +388,20 @@ def make_plots(train, test, pipelines):
     for ext in extensions:
         plt.savefig("./figures/confusion_matrix."+ext)
     plt.clf()
-    plot_learning_curves(X_train, y_train, X_test, y_test, 
+    '''plot_learning_curves(X_train, y_train, X_test, y_test, 
                          clf, style='seaborn-colorblind', print_model=False)
     fig = plt.gcf()
     fig.set_size_inches(4,3)
     plt.ylabel("Misclassification fraction")
     plt.tight_layout()
     for ext in extensions:
-        plt.savefig("./figures/learning_curve."+ext)
+        plt.savefig("./figures/learning_curve."+ext)'''
 
 def main(train, test, iters, path_to_db, predict):
     if predict is not None:
         X = load_X(predict)
         pipelines = PipelineList(path_to_db)
-        best_pipe = select_and_save_best_model(pipelines)
+        best_pipe = select_and_save_best_model(pipelines, path_to_db)
         y_pred = best_pipe.preprocess_predict(X)
         print(y_pred)
         exit(0)
@@ -410,7 +412,7 @@ def main(train, test, iters, path_to_db, predict):
     table = pipelines.print()
     with open("./figures/table.csv", "w") as text_file:
         text_file.write(table)
-    select_and_save_best_model(pipelines)
+    select_and_save_best_model(pipelines, path_to_db)
     make_plots(train, test, pipelines)
 
 

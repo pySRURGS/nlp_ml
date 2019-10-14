@@ -363,21 +363,22 @@ def make_plots(train, test, pipelines):
     pipelines.sort()
     clf = pipelines._results[0]
     y_pred = clf.predict(X_test)
-    classifiers_with_predict_proba = find_classifiers_with_predict_proba()
+    classifiers_with_predict_proba = find_classifiers_with_predict_proba()    
+    plt.clf()
     if clf.classifier.__class__.__name__ in classifiers_with_predict_proba:
         y_probas = clf.predict_proba(X_test)[:,0]
         fpr, tpr, _ = metrics.roc_curve(y_test, y_probas)
-        fig = plt.figure(1)
         plt.plot([0, 1], [0, 1], 'k--')
         plt.plot(fpr, tpr)
         plt.xlabel('False positive rate')
         plt.ylabel('True positive rate')   
+        fig = plt.gcf()
         fig.set_size_inches(4,3)
         plt.tight_layout()
         for ext in extensions:
-            plt.savefig("./figures/roc_curve."+ext)
+            plt.savefig("./figures/roc_curve."+ext)        
     else:
-        print(clf.classifier.__class__.__name__,"not in predict proba list")
+        print(clf.classifier.__class__.__name__,"not in predict proba list")       
     cm = confusion_matrix(y_target=y_test, 
                           y_predicted=y_pred, 
                           binary=True)
@@ -387,15 +388,14 @@ def make_plots(train, test, pipelines):
     plt.tight_layout()
     for ext in extensions:
         plt.savefig("./figures/confusion_matrix."+ext)
-    plt.clf()
-    '''plot_learning_curves(X_train, y_train, X_test, y_test, 
+    plot_learning_curves(X_train, y_train, X_test, y_test, 
                          clf, style='seaborn-colorblind', print_model=False)
     fig = plt.gcf()
     fig.set_size_inches(4,3)
     plt.ylabel("Misclassification fraction")
     plt.tight_layout()
     for ext in extensions:
-        plt.savefig("./figures/learning_curve."+ext)'''
+        plt.savefig("./figures/learning_curve."+ext)
 
 def main(train, test, iters, path_to_db, predict):
     if predict is not None:

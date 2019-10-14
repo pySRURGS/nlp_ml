@@ -23,12 +23,14 @@ def main(data_csv, output_train, output_test, train_split=0.75):
     # write train file 
     df = pd.DataFrame()
     df['text'] = X_train
-    df['class'] = y_train    
+    df['class'] = y_train
+    df = df.dropna()
     df.to_csv(output_train, quoting=1, index=False)
     # write test file
     df = pd.DataFrame()
     df['text'] = X_test
     df['class'] = y_test    
+    df = df.dropna()
     df.to_csv(output_test, quoting=1, index=False)
     return 
 

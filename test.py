@@ -21,5 +21,4 @@ train = './spam_data/SMSSpamCollectionMini_train.csv'
 test = './spam_data/SMSSpamCollectionMini_test.csv'
 iters = 2
 path_to_db = './output.db'
-predict = None
-nlp_ml.main(train, test, iters, path_to_db, predict)
+sh.python('nlp_ml.py', train, test, iters, path_to_db)

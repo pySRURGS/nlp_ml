@@ -51,6 +51,7 @@ import sys
 import numpy as np
 import argparse
 import random
+import parmap
 import sqlitedict
 import pandas as pd
 from imblearn.over_sampling import SMOTE
@@ -397,25 +398,6 @@ def make_plots(train, test, pipelines):
     for ext in extensions:
         plt.savefig("./figures/learning_curve."+ext)
 
-def main(train, test, iters, path_to_db, predict):
-    if predict is not None:
-        X = load_X(predict)
-        pipelines = PipelineList(path_to_db)
-        best_pipe = select_and_save_best_model(pipelines, path_to_db)
-        y_pred = best_pipe.preprocess_predict(X)
-        print(y_pred)
-        exit(0)
-    for i in range(0, iters):
-        run(train, test, path_to_db)
-    pipelines = PipelineList(path_to_db)
-    pipelines.sort()
-    table = pipelines.print()
-    with open("./figures/table.csv", "w") as text_file:
-        text_file.write(table)
-    select_and_save_best_model(pipelines, path_to_db)
-    make_plots(train, test, pipelines)
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='nlp_ml.py',
@@ -445,4 +427,20 @@ if __name__ == '__main__':
     iters = arguments.iters
     path_to_db = arguments.path_to_db
     predict = arguments.predict
-    main(train, test, iters, path_to_db, predict)
+    if predict is not None:
+        X = load_X(predict)
+        pipelines = PipelineList(path_to_db)
+        best_pipe = select_and_save_best_model(pipelines, path_to_db)
+        y_pred = best_pipe.preprocess_predict(X)
+        print(y_pred)
+        exit(0)
+    results = parmap.map(run, [train] * iters,
+                         test, path_to_db, 
+                         pm_pbar=True)
+    pipelines = PipelineList(path_to_db)
+    pipelines.sort()
+    table = pipelines.print()
+    with open("./figures/table.csv", "w") as text_file:
+        text_file.write(table)
+    select_and_save_best_model(pipelines, path_to_db)
+    make_plots(train, test, pipelines)

@@ -302,15 +302,17 @@ class PipelineList():
 
     def print(self, top=5):
         table = []
-        header = ["_train_accuracy", "_train_precision", "_train_recall", 
-                  "_train_roc_auc", "_test_accuracy", "_test_precision", 
-                  "_test_recall", "_test_roc_auc"]
+        header = ["train accuracy", "train precision", "train recall", 
+                  "train roc_auc", "test accuracy", "test precision", 
+                  "test recall", "test roc auc"]
         num_eqn = int(np.min((top, len(self._results))))
         for i in range(0, num_eqn):
             row = self._results[i].summarize()
+            row = ["{0:.2f}".format(x) for x in row]
             table.append(row)
-        table_string = tabulate.tabulate(table, headers=header, floatfmt=".2f")        
-        print(table_string)
+        table_string = ','.join(header)
+        for i in range(0,len(table)):
+            table_string += '\n' + ','.join(table[i])
         return table_string
 
 
@@ -379,7 +381,7 @@ def make_plots(train, test, pipelines):
         for ext in extensions:
             plt.savefig("./figures/roc_curve."+ext)        
     else:
-        print(clf.classifier.__class__.__name__,"not in predict proba list")       
+        print(clf.classifier.__class__.__name__,"not in predict proba list")    
     cm = confusion_matrix(y_target=y_test, 
                           y_predicted=y_pred, 
                           binary=True)
@@ -389,14 +391,14 @@ def make_plots(train, test, pipelines):
     plt.tight_layout()
     for ext in extensions:
         plt.savefig("./figures/confusion_matrix."+ext)
-    plot_learning_curves(X_train, y_train, X_test, y_test, 
+    '''plot_learning_curves(X_train, y_train, X_test, y_test, 
                          clf, style='seaborn-colorblind', print_model=False)
     fig = plt.gcf()
     fig.set_size_inches(4,3)
     plt.ylabel("Misclassification fraction")
     plt.tight_layout()
     for ext in extensions:
-        plt.savefig("./figures/learning_curve."+ext)
+        plt.savefig("./figures/learning_curve."+ext)'''
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

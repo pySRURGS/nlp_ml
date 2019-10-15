@@ -297,7 +297,7 @@ class PipelineList():
                 pass
 
     def sort(self):
-        self._results = sorted(self._results, key=lambda x: x._train_accuracy,
+        self._results = sorted(self._results, key=lambda x: x._train_precision,
                                reverse=True)
 
     def print(self, top=5):
@@ -340,24 +340,6 @@ def run(train, test, path_to_db):
         except InvalidConfigError:
             return -1
 
-
-def select_and_save_best_model(pipelines, path_to_db, 
-                               train_accuracy_criterion=0.9,
-                               test_accuracy_criterion=0.9):
-    pipelines.sort()
-    chosen_model = None
-    for i in range(0,len(pipelines._results)):
-        pipeline = pipelines._results[i]
-        if pipeline._train_accuracy > train_accuracy_criterion:
-            if pipeline._test_accuracy > test_accuracy_criterion:
-                chosen_model = pipeline
-    if chosen_model is None:
-        print("No model meets the accuracy criteria")
-    else:
-        with SqliteDict(path_to_db, autocommit=True) as results_dict:
-            results_dict['best_model'] = chosen_model
-        pipelines._best_pipeline = chosen_model        
-    return chosen_model
 
 def make_plots(train, test, pipelines):
     extensions = ['svg', 'eps', 'png']
@@ -432,7 +414,8 @@ if __name__ == '__main__':
     if predict is not None:
         X = load_X(predict)
         pipelines = PipelineList(path_to_db)
-        best_pipe = select_and_save_best_model(pipelines, path_to_db)
+        pipelines.sort()
+        best_pipe = pipelines._results[0]
         y_pred = best_pipe.preprocess_predict(X)
         print(y_pred)
         exit(0)
@@ -444,5 +427,4 @@ if __name__ == '__main__':
     table = pipelines.print()
     with open("./figures/table.csv", "w") as text_file:
         text_file.write(table)
-    select_and_save_best_model(pipelines, path_to_db)
     make_plots(train, test, pipelines)

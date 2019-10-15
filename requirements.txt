@@ -14,3 +14,4 @@ cython
 thinc
 ujson
 cytoolz
+parmap

@@ -367,7 +367,7 @@ def make_plots(train, test, pipelines):
     classifiers_with_predict_proba = find_classifiers_with_predict_proba()    
     plt.clf()
     if clf.classifier.__class__.__name__ in classifiers_with_predict_proba:
-        y_probas = clf.predict_proba(X_test)[:,0]
+        y_probas = clf.predict_proba(X_test)[:,1]
         fpr, tpr, _ = metrics.roc_curve(y_test, y_probas)
         plt.plot([0, 1], [0, 1], 'k--')
         plt.plot(fpr, tpr)

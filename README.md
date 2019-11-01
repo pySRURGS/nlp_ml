@@ -40,7 +40,7 @@ optional arguments:
 ### An example
 
 ```
-python nlp_ml.py ./spam_data/SMSSpamCollection_train.csv ./spam_data/SMSSpamCollection_test.csv 4 ./spam_data.db
+winpty python nlp_ml.py ./spam_data/SMSSpamCollection_train.csv ./spam_data/SMSSpamCollection_test.csv 4 ./spam_data.db
 ```
 
 Which, after some messages regarding the status of computations, should print out the following.

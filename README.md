@@ -25,7 +25,7 @@ pip install -r requirements.txt --user
 Run the script from within the `nlp_ml` directory.
 
 ```
-python nlp_ml.py -h
+winpty python nlp_ml.py -h
 ```
 
 Should print 

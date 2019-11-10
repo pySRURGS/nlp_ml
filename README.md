@@ -10,7 +10,7 @@ To download the code:
 ```
 git clone https://github.com/pySRURGS/nlp_ml.git
 ```
-The simplest way to install dependencies is probably to install the anaconda distribution: Anaconda3-5.2.0-Windows-x86_64. Then run 
+The simplest way to install dependencies is probably to install the anaconda distribution: [Anaconda3-5.2.0-Windows-x86_64](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe). Then run 
 ```
 conda install conda install -c conda-forge spacy
 ```

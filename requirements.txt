@@ -11,7 +11,4 @@ pytest-cov==2.7.1
 scikit-plot==0.3.7
 pbs==0.110
 cython
-thinc
-ujson
-cytoolz
 parmap

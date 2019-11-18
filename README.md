@@ -6,6 +6,8 @@
 
 ## Installation
 
+Install [git](https://git-scm.com/downloads). Run the rest of the commands in git bash.
+
 To download the code:
 ```
 git clone https://github.com/pySRURGS/nlp_ml.git

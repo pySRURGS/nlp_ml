@@ -16,7 +16,9 @@ Install the anaconda distribution: [Anaconda3-5.2.0-Windows-x86_64](https://repo
 ```
 conda install -c conda-forge spacy
 ```
-Otherwise run the following commands, though this may not work in Windows
+
+Then, install the remaining prerequisites.
+
 ```
 cd nlp_ml
 pip install -r requirements.txt --user

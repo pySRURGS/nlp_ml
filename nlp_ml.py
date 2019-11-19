@@ -193,7 +193,7 @@ def load_X(path_to_csv):
     df = pd.read_csv(path_to_csv)
     X = df['text']
     X = X.tolist()
-    return X, y    
+    return X
 
 class CustomPipeline():
     def __init__(self, vectorizer, classifier):

@@ -85,3 +85,14 @@ Sohrab Towfighi
 
 ## License
 This project is licensed under the GPL 3.0 License - see the [LICENSE](LICENSE) file for details
+
+
+## Community
+
+If you would like to contribute to the project or you need help, then please create an issue. 
+
+With regards to community suggested changes, I would comment as to whether it would be within the scope of the project to include the suggested changes. If both parties are in agreement, whomever is interested in developing the changes can make a pull request, or I will implement the suggested changes. 
+
+## Acknowledgments
+
+* The headline image is derived from Gray's Anatomy and is in the public domain: [Link](https://upload.wikimedia.org/wikipedia/commons/0/0e/Lobes_of_the_brain_NL.svg).

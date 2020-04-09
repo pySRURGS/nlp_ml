@@ -1,7 +1,7 @@
 ![brain](figures/Lobes_of_the_brain.png)
 
 
-# nlp_ml
+# Natural Language Processing and Machine Learning (nlp_ml)
 [![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 

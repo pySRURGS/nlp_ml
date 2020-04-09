@@ -1,4 +1,5 @@
-![brain](figures/lorem_ipsum_publicdomain.svg)
+![brain](figures/Lobes_of_the_brain.png)
+
 
 # nlp_ml
 [![Build Status](https://travis-ci.org/pySRURGS/nlp_ml.svg?branch=master)](https://travis-ci.org/pySRURGS/nlp_ml)

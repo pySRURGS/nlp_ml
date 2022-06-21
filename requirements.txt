@@ -12,4 +12,4 @@ scikit-plot==0.3.7
 pbs==0.110
 cython==0.29.14
 parmap
-numpy==1.17.4
+numpy==1.22.0
